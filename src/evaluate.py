@@ -16,13 +16,11 @@ DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 MODEL_PATH = "checkpoints/resnet_bit_epoch_20.pth"
 
 def run_quantitative_eval(model_path=MODEL_PATH, epsilon=8/255.0):
-    print(f"Loading custom model from {model_path}...")
-    model = Model(num_classes=10).to(DEVICE)
     if os.path.exists(model_path):
-        model.load_state_dict(torch.load(model_path, map_location=DEVICE))
-        print("Success: Loaded trained checkpoint.")
+        model = Model.load(model_path, device=DEVICE, num_classes=10)
     else:
         print("Warning: Checkpoint not found. Evaluating base model.")
+        model = Model(num_classes=10).to(DEVICE)
     
     _, test_loader = get_dataloaders(batch_size=128)
     

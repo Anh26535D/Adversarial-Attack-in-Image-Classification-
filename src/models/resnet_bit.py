@@ -38,3 +38,25 @@ class Model(nn.Module):
 
     def forward(self, x):
         return self.model(x)
+
+    def save(self, path):
+        """Save model weights to file."""
+        import os
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        torch.save(self.state_dict(), path)
+        print(f"Model saved to {path}")
+
+    @classmethod
+    def load(cls, path, device='cpu', **kwargs):
+        """Load model weights from file."""
+        model = cls(**kwargs)
+        if torch.cuda.is_available() and device == 'cuda':
+            device = torch.device('cuda')
+        else:
+            device = torch.device('cpu')
+            
+        model.load_state_dict(torch.load(path, map_location=device))
+        model.to(device)
+        model.eval()
+        print(f"Model loaded from {path} on {device}")
+        return model

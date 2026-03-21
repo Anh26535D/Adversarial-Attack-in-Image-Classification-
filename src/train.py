@@ -85,5 +85,4 @@ if __name__ == "__main__":
         evaluate(model, test_loader, criterion, attacker=attacker)
         
         if epoch % 5 == 0:
-            torch.save(model.state_dict(), f"{SAVE_DIR}/resnet_bit_epoch_{epoch}.pth")
-            print(f"Model saved to {SAVE_DIR}")
+            model.save(f"{SAVE_DIR}/resnet_bit_epoch_{epoch}.pth")
