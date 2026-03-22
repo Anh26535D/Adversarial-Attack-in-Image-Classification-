@@ -21,6 +21,8 @@ image_classification_adversarial_training/
 ```
 
 ## Getting Started
+
+### Local Setup
 1. **Install dependencies**:
    ```bash
    pip install -r requirements.txt
@@ -33,6 +35,21 @@ image_classification_adversarial_training/
    ```bash
    python src/evaluate.py
    ```
+
+### Running on Google Colab
+To run this project on Colab, use a code cell with the following commands:
+```python
+# 1. Clone the repository
+!git clone <YOUR_GITHUB_REPO_URL>
+%cd <YOUR_REPO_NAME>
+
+# 2. Run the setup script
+!bash setup_colab.sh
+
+# 3. Start training or run notebooks
+!python src/train.py
+```
+Alternatively, you can open and run the notebooks located in the `notebooks/` directory directly within Colab after cloning.
 
 ## Key Components
 - **`src/attacks/base_attacks.py`**: Implementation of FGSM and PGD.
