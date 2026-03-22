@@ -68,7 +68,7 @@ def run_quantitative_eval(model_path=DEFAULT_MODEL_PATH, epsilon=8/255.0):
     
     results_dir = "./results"
     os.makedirs(results_dir, exist_ok=True)
-    model_name = os.path.basename(model_path).replace(".pth", "")
+    model_name = os.path.basename(model_path).replace(".pth", "").replace(".safetensors", "")
     output_file = f"{results_dir}/eval_{model_name}.csv"
     df.to_csv(output_file, index=False)
     print(f"Results saved to {output_file}")
