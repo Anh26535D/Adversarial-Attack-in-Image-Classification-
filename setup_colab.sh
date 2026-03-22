@@ -10,6 +10,10 @@ pip install -r requirements.txt
 echo "Creating project directories..."
 mkdir -p checkpoints results data
 
+# Download CIFAR-10 data
+echo "Downloading CIFAR-10 dataset..."
+python src/utils/download_data.py
+
 # Verify installation
 python -c "import torch; import timm; print('Setup successful! PyTorch version:', torch.__version__)"
 
