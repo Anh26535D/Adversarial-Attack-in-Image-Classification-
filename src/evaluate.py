@@ -2,6 +2,7 @@ import torch
 import os
 import sys
 import pandas as pd
+import argparse
 
 # Add project root to path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -13,13 +14,14 @@ from src.utils.data_loader import get_dataloaders
 
 # Config
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-MODEL_PATH = "checkpoints/resnet_bit_epoch_20.pth"
+DEFAULT_MODEL_PATH = "checkpoints/resnet_bit_epoch_20.pth"
 
-def run_quantitative_eval(model_path=MODEL_PATH, epsilon=8/255.0):
+def run_quantitative_eval(model_path=DEFAULT_MODEL_PATH, epsilon=8/255.0):
     if os.path.exists(model_path):
+        print(f"Loading model from {model_path}...")
         model = Model.load(model_path, device=DEVICE, num_classes=10)
     else:
-        print("Warning: Checkpoint not found. Evaluating base model.")
+        print(f"Warning: Checkpoint '{model_path}' not found. Evaluating base model.")
         model = Model(num_classes=10).to(DEVICE)
     
     _, test_loader = get_dataloaders(batch_size=128)
@@ -36,7 +38,7 @@ def run_quantitative_eval(model_path=MODEL_PATH, epsilon=8/255.0):
         ("Bit Depth Defense (PGD)", "bit_depth_pgd")
     ]
     
-    print("\nRunning Robustness Evaluation...")
+    print(f"\nRunning Robustness Evaluation (epsilon={epsilon:.4f})...")
     for label, mode in scenarios:
         correct = 0
         total = 0
@@ -66,8 +68,18 @@ def run_quantitative_eval(model_path=MODEL_PATH, epsilon=8/255.0):
     
     results_dir = "./results"
     os.makedirs(results_dir, exist_ok=True)
-    df.to_csv(f"{results_dir}/evaluation_results.csv", index=False)
-    print(f"Results saved to {results_dir}/evaluation_results.csv")
+    model_name = os.path.basename(model_path).replace(".pth", "")
+    output_file = f"{results_dir}/eval_{model_name}.csv"
+    df.to_csv(output_file, index=False)
+    print(f"Results saved to {output_file}")
 
 if __name__ == "__main__":
-    run_quantitative_eval()
+    parser = argparse.ArgumentParser(description="Evaluate model robustness against adversarial attacks.")
+    parser.add_argument("--model", type=str, default=DEFAULT_MODEL_PATH, 
+                        help=f"Path to the model checkpoint (default: {DEFAULT_MODEL_PATH})")
+    parser.add_argument("--epsilon", type=float, default=8/255.0, 
+                        help="Maximum perturbation for attacks (default: 8/255.0)")
+    
+    args = parser.parse_args()
+    run_quantitative_eval(model_path=args.model, epsilon=args.epsilon)
+
