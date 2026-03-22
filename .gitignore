@@ -1,3 +1,7 @@
+# Checkpoints
+checkpoints/*.pth
+checkpoints/*.safetensors
+
 # Python
 __pycache__/
 *.py[cod]
